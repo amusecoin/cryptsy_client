@@ -1,7 +1,7 @@
 module CryptsyClient
 	class Order
 		attr_accessor :market_id, :price, :quantity, :total, :order_id, :error
-		
+
 		def initialize(market_id, price, quantity, total=nil)
 			@market_id = market_id.to_i
 			@order_id  = nil

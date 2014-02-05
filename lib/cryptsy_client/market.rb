@@ -5,11 +5,11 @@ module CryptsyClient
              			:primary_coin,      :secondary_coin,
              			:primary_coin_name, :secondary_coin_name,
              			:last_trade
-             
+
 		def initialize(cryptsy_data)
 			@market_id = cryptsy_data.delete(:market_id)
 			@market_id = @market_id.to_i
-			raise 'At least market_id required' if @market_id.nil? 
+			raise 'At least market_id required' if @market_id.nil?
 			update(cryptsy_data)
 	  end
 
@@ -46,7 +46,7 @@ module CryptsyClient
 			end
 			response = {}
 			unless only.eql?(:buy)
-				response[:sell] = active_orders[:sellorders].collect{|so| SellOrder.new(market_id, so[:price], so[:quantity], so[:total])} 
+				response[:sell] = active_orders[:sellorders].collect{|so| SellOrder.new(market_id, so[:price], so[:quantity], so[:total])}
 			end
 			unless only.eql?(:sell)
 				response[:buy] = active_orders[:buyorders].collect{|so| BuyOrder.new(market_id, so[:price], so[:quantity], so[:total])}

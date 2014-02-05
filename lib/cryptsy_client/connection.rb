@@ -8,7 +8,7 @@ module CryptsyClient
 					Response.new.parse_hash(item)
 				elsif item.kind_of?(Array)
 					Response.new.parse_array(item)
-				elsif item.kind_of?(String) && item.match(/^\d+(?:\.\d+)?$/) 
+				elsif item.kind_of?(String) && item.match(/^\d+(?:\.\d+)?$/)
 					item.to_f
 				else
 					item
@@ -46,7 +46,7 @@ module CryptsyClient
 		def parse_hash(hash)
 			out_hash = {}
 			hash.each do |key, value|
-			  if value.kind_of?(String) 
+			  if value.kind_of?(String)
 				  if key.match(/id$/) && value.match(/^\d+$/)
 						out_hash[key.gsub(/id$/, "_id").gsub(/__/, "_").to_sym] = value.to_i
 					elsif value.match(/^\d+(?:\.\d+)?$/) && key !~ /_code/
@@ -95,7 +95,7 @@ module CryptsyClient
 			retrycount ||= 0
 			Timeout.timeout(60) do
 			  response = api.send(method, *params)
-				if response.kind_of?(Array) 
+				if response.kind_of?(Array)
 					ListResponse.new(response)
 			  elsif response.kind_of?(Hash) && response["return"].kind_of?(Array)
 					ListResponse.new(response["return"])
