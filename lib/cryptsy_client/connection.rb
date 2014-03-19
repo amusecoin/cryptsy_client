@@ -48,7 +48,7 @@ module CryptsyClient
       hash.each do |key, value|
         if value.kind_of?(String)
           if key.match(/id$/) && value.match(/^\d+$/)
-            out_hash[key.gsub(/id$/, "_id").gsub(/__/, "_").to_sym] = value.to_i
+            out_hash[key.gsub(/id$/, '_id').gsub(/__/, '_').gsub(/^_id$/, 'id').to_sym] = value.to_i
           elsif value.match(/^\d+(?:\.\d+)?$/) && key !~ /_code/
             out_hash[key.match(/[0-9A-Z]/) ? key : key.to_sym] = value.to_f
           else

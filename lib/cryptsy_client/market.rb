@@ -39,6 +39,23 @@ module CryptsyClient
       end
     end
 
+    def open_orders
+      active_orders = CryptsyClient.connection.call(:myorders, market_id)
+      unless active_orders.success?
+        return []
+      end
+      active_orders.collect do |order|
+        case order[:ordertype]
+        when "Sell"
+          SellOrder.new(market_id, order[:price], order[:quantity], order[:total])
+        when "Buy"
+          BuyOrder.new(market_id, order[:price], order[:quantity], order[:total])
+        else
+          nil
+        end
+      end
+    end
+
     def orders(only=nil)
       active_orders = CryptsyClient.connection.call(:marketorders, market_id)
       unless active_orders.success?
@@ -46,10 +63,10 @@ module CryptsyClient
       end
       response = {}
       unless only.eql?(:buy)
-        response[:sell] = active_orders[:sellorders].collect{|so| SellOrder.new(market_id, so[:price], so[:quantity], so[:total])}
+        response[:sell] = active_orders[:sellorders].collect{|so| SellOrder.new(market_id, so[:sellprice], so[:quantity], so[:total])}
       end
       unless only.eql?(:sell)
-        response[:buy] = active_orders[:buyorders].collect{|so| BuyOrder.new(market_id, so[:price], so[:quantity], so[:total])}
+        response[:buy] = active_orders[:buyorders].collect{|so| BuyOrder.new(market_id, so[:buyprice], so[:quantity], so[:total])}
       end
       response
     end
@@ -69,13 +86,13 @@ module CryptsyClient
     end
 
     def sell!(price, quantity)
-      order = BuyOrder.new(market_id, price, quantity)
+      order = SellOrder.new(market_id, price, quantity)
       order.execute!
       order
     end
 
     def recent_trades
-      CryptsyClient.connection.call(:markettrades, market_id)["return"].collect{|td| Trade.new(market_id, td)}
+      CryptsyClient.connection.call(:markettrades, market_id).collect{|td| Trade.new(market_id, td)}
     end
 
     def update(cryptsy_data = {})
